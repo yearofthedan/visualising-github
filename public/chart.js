@@ -33,7 +33,6 @@ const drag = simulation => {
 
 export function draw(data) {
   // drawn from https://observablehq.com/@d3/force-directed-graph
-
   const links = data.links.map(d => Object.create(d));
   const nodes = data.nodes.map(d => Object.create(d));
 

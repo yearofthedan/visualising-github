@@ -6,26 +6,99 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Relationships</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsonpath@1.0.2/jsonpath.min.js"></script>
   </head>
   <body>
     <a href="/">Home</a>
     <script type="module">
       import {draw} from "./chart.js";
+      import {githubToken} from './secret/token.js';
 
-      const data = {
-        nodes: [{id: "Me"}, {id: "My Mum"}, {id: "My Mum's friend"}],
-        links: [{
-          source: "Me",
-          target: "My Mum",
-          value: 1
-        }, {
-          source: "My Mum",
-          target: "My Mum's friend",
-          value: 30
-        }]
-      };
+      //TODO this is pretty convoluted atm and does not weight the edges yet
+      const query = async () => {
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${githubToken}`);
+        myHeaders.append("Content-Type", "application/json");
 
-      draw(data);
+        const organisation = `facebook`;
+
+        const graphql = JSON.stringify({
+          query: `{
+          repositoryOwner(login: "${organisation}") {
+            repositories(first: 20) {
+              nodes {
+                name
+                pullRequests(last: 20, states: MERGED) {
+                  nodes {
+                    author {
+                      login
+                    }
+                    reviews(states: APPROVED, first: 5) {
+                      nodes {
+                        author {
+                          login
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+        }`,
+          variables: {}
+        });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: graphql,
+          redirect: 'follow'
+        };
+
+        const response = await fetch("https://api.github.com/graphql", requestOptions);
+        const json = (await response.json()).data;
+
+        const reposWithReviews = json.repositoryOwner.repositories.nodes.map(repo => {
+          return {
+            name: repo.name,
+            reviews: repo.pullRequests.nodes.flatMap(pr => {
+              return pr.reviews.nodes
+                .map(review => {
+                  return {
+                    reviewer: review.author.login,
+                    author: pr.author.login,
+                  }
+                });
+            })
+          }
+        }).filter(repo => repo.reviews.length > 0);
+
+        const links = reposWithReviews.flatMap(repo => repo.reviews.map(review => {
+          return {
+            source: review.reviewer,
+            target: review.author,
+            value: 1};
+        }));
+
+        const nodes = Array.from(
+          new Set(reposWithReviews
+                    .flatMap(repo => repo.reviews
+                            .reduce((prev, review) => ([...prev, review.reviewer, review.author]), [])
+                    )
+          ).values()
+        ).map(name => ({ id: name }));
+
+        return {
+          nodes, links
+        };
+      }
+
+      query()
+      .then(draw)
+      .catch(error => console.log('error', error));
+
     </script>
   </body>
 </html>
