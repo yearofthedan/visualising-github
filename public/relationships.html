@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Relationships</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+  <body>
+    <a href="/">Home</a>
+    <script type="module">
+      import {draw} from "./chart.js";
+
+      const data = {
+        nodes: [{id: "Me"}, {id: "My Mum"}, {id: "My Mum's friend"}],
+        links: [{
+          source: "Me",
+          target: "My Mum",
+          value: 1
+        }, {
+          source: "My Mum",
+          target: "My Mum's friend",
+          value: 30
+        }]
+      };
+
+      draw(data);
+    </script>
+  </body>
+</html>
