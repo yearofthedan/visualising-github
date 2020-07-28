@@ -1,10 +1,10 @@
 const graphql = (organisation) => JSON.stringify({
   query: `{
           repositoryOwner(login: "${organisation}") {
-            repositories(first: 10) {
+            repositories(first: 20) {
               nodes {
                 name
-                pullRequests(last: 40, states: MERGED) {
+                pullRequests(last: 50, states: MERGED) {
                   nodes {
                     author {
                       login
