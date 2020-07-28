@@ -9,58 +9,26 @@
     <script src="https://cdn.jsdelivr.net/npm/jsonpath@1.0.2/jsonpath.min.js"></script>
   </head>
   <body>
-    <a href="/">Home</a>
+    <nav><a href="/">Home</a></nav>
+    <article>
+    Organisation to query <input id="organisation" type="text" value="facebook"/>
+    <button id="run-query" type="button">Do query</button>
+
     <script type="module">
       import {draw} from "./chart.js";
-      import {githubToken} from './secret/token.js';
+      import {doQuery} from "./graphQLQuery.js";
+      import orgReviewApprovalNetwork from "./queries/orgReviewApprovalNetwork.js";
 
-      //TODO this is pretty convoluted atm and does not weight the edges yet
-      const query = async () => {
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${githubToken}`);
-        myHeaders.append("Content-Type", "application/json");
 
-        const organisation = `facebook`;
+      document.getElementById("run-query").addEventListener('click', runQuery);
 
-        const graphql = JSON.stringify({
-          query: `{
-          repositoryOwner(login: "${organisation}") {
-            repositories(first: 20) {
-              nodes {
-                name
-                pullRequests(last: 20, states: MERGED) {
-                  nodes {
-                    author {
-                      login
-                    }
-                    reviews(states: APPROVED, first: 5) {
-                      nodes {
-                        author {
-                          login
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
 
-        }`,
-          variables: {}
-        });
+      async function runQuery() {
+        const organisation = document.getElementById("organisation").value;
 
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: graphql,
-          redirect: 'follow'
-        };
+        const queryResult = await doQuery(orgReviewApprovalNetwork(organisation));
 
-        const response = await fetch("https://api.github.com/graphql", requestOptions);
-        const json = (await response.json()).data;
-
-        const reposWithReviews = json.repositoryOwner.repositories.nodes.map(repo => {
+        const reposWithReviews = queryResult.repositoryOwner.repositories.nodes.map(repo => {
           return {
             name: repo.name,
             reviews: repo.pullRequests.nodes.flatMap(pr => {
@@ -90,15 +58,9 @@
           ).values()
         ).map(name => ({ id: name }));
 
-        return {
-          nodes, links
-        };
+        draw({ nodes, links })
       }
-
-      query()
-      .then(draw)
-      .catch(error => console.log('error', error));
-
     </script>
+    </article>
   </body>
 </html>

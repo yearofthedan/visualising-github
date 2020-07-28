@@ -1,5 +1,5 @@
 const height = 600;
-const width = 600;
+const width = 800;
 
 function color(d) {
   const scale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -38,8 +38,10 @@ export function draw(data) {
 
   const simulation = d3.forceSimulation(nodes)
   .force("link", d3.forceLink(links).id(d => d.id))
-  .force("charge", d3.forceManyBody())
+  .force("charge", d3.forceManyBody().strength(-10))
   .force("center", d3.forceCenter(width / 2, height / 2));
+
+  d3.select("body").select("svg").remove();
 
   const svg = d3.select("body").append("svg")
   .attr("viewBox", [0, 0, width, height]);
@@ -52,13 +54,22 @@ export function draw(data) {
   .join("line")
   .attr("stroke-width", d => Math.sqrt(d.value));
 
+  const labels = svg.append("g")
+  .attr("fill", "blue")
+  .attr("font-size", "12px")
+  .attr("stroke-width", 1.5)
+  .selectAll("text")
+  .data(nodes)
+  .join("text")
+  .text(d => d.id);
+
   const node = svg.append("g")
   .attr("stroke", "#fff")
   .attr("stroke-width", 1.5)
   .selectAll("circle")
   .data(nodes)
   .join("circle")
-  .attr("r", 5)
+  .attr("r", 6)
   .attr("fill", color)
   .call(drag(simulation));
 
@@ -75,6 +86,10 @@ export function draw(data) {
     node
     .attr("cx", d => d.x)
     .attr("cy", d => d.y);
+
+    labels
+    .attr("x", d => d.x + 12)
+    .attr("y", d => d.y - 12);
   });
 
   return svg.node();
