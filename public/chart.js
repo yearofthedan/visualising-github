@@ -3,7 +3,7 @@ const width = 800;
 
 function color(d) {
   const scale = d3.scaleOrdinal(d3.schemeCategory10);
-  return d => scale(1);
+  return d => scale(d);
 }
 
 const drag = simulation => {
@@ -36,13 +36,14 @@ export function draw({links, nodes}) {
 
   const simulation = d3.forceSimulation(nodes)
   .force("link", d3.forceLink(links).id(d => d.id))
-  .force("charge", d3.forceManyBody().strength(-150))
-  .force("center", d3.forceCenter(width / 2, height / 2));
+  .force("charge", d3.forceManyBody().strength(-100))
+  .force("x", d3.forceX())
+  .force("y", d3.forceY());
 
   d3.select("body").select("svg").remove();
 
   const svg = d3.select("body").append("svg")
-  .attr("viewBox", [0, 0, width, height]);
+  .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
   const link = svg.append("g")
   .attr("stroke", "#999")
