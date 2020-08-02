@@ -74,7 +74,7 @@ const mapQueryResultToChartData = (queryResult) => {
 }
 
 const createOrgPrRelationshipChart = (organisation) => {
-  doQuery(graphqlQuery(organisation))
+  return doQuery(graphqlQuery(organisation))
     .then(mapQueryResultToChartData)
     .then(renderForceGraphChart);
 }

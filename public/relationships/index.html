@@ -19,16 +19,68 @@
     import createOrgPrRelationshipChart from "./orgPrRelationshipChart.js";
     import createRepoPrRelationshipChart from "./repoPrRelationshipChart.js";
 
-    document.getElementById("run-org-query").addEventListener('click', () => {
-      createOrgPrRelationshipChart(document.getElementById("organisation").value);
+    document.getElementById("run-org-query").addEventListener('click', async (event) => {
+      event.target.setAttribute('data-loading', 'true');
+      await createOrgPrRelationshipChart(document.getElementById("organisation").value);
+      event.target.setAttribute('data-loading', null);
     });
-    document.getElementById("run-repo-query").addEventListener('click', () => {
-      createRepoPrRelationshipChart(
+    document.getElementById("run-repo-query").addEventListener('click', async (event) => {
+      event.target.setAttribute('data-loading', 'true');
+      await createRepoPrRelationshipChart(
         document.getElementById("organisation").value,
         document.getElementById("repo").value
-    )
+      );
+      event.target.setAttribute('data-loading', null);
     });
   </script>
 </article>
 </body>
+<style>
+  button {
+    --font-size-button: 0.8rem;
+    --button-height: 2rem;
+    --colour-disabled: hsl(180, 6%, 87%);
+    --colour-primary: hsl(223, 55%, 51%);
+    --colour-primary-text: hsla(0, 100%, 100%, 1);
+    --unit-base-rem: calc(1rem / 4);
+  }
+
+  button {
+    height: var(--button-height);
+    border-radius: calc(1 * var(--unit-base-rem));
+    font-size: var(--font-size-button);
+    text-transform: uppercase;
+    position: relative;
+    background-color: var(--colour-primary);
+    color: var(--colour-primary-text);
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  button[data-loading='true'] {
+    outline: none;
+    background-color: var(--colour-disabled);
+    color: var(--colour-disabled);
+  }
+
+  button[data-loading='true']::before {
+    --spinner-radius: calc(2 * var(--unit-base-rem));
+    content: '';
+    position: absolute;
+    width: calc(2 * var(--spinner-radius));
+    height: calc(2 * var(--spinner-radius));
+    border-top: 2px solid var(--colour-primary);
+    animation: 2s rotate linear infinite;
+    border-radius: 100%;
+    left: calc(50% - var(--spinner-radius));
+  }
+
+</style>
 </html>

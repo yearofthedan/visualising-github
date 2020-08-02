@@ -66,7 +66,7 @@ const mapQueryResultToChartData = (queryResult) => {
 }
 
 const createRepoPrRelationshipChart = async (organisation, repository) => {
-  doQuery(graphqlQuery(organisation, repository))
+  return doQuery(graphqlQuery(organisation, repository))
     .then(mapQueryResultToChartData)
     .then(renderForceGraphChart);
 }
