@@ -31,7 +31,7 @@ const drag = simulation => {
   .on("end", dragended);
 }
 
-export function draw({links, nodes}) {
+function draw({links, nodes}) {
   // drawn from https://observablehq.com/@d3/force-directed-graph
 
   const simulation = d3.forceSimulation(nodes)
@@ -93,3 +93,5 @@ export function draw({links, nodes}) {
 
   return svg.node();
 }
+
+export default draw;

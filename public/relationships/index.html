@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Relationships</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+<nav><a href="/">Home</a></nav>
+<article>
+  <label>Organisation to query <input id="organisation" type="text" value="facebook"/></label>
+  <button id="run-org-query" type="button">Query entire org</button>
+  <label>Repo to query <input id="repo" type="text" value="react"/></label>
+  <button id="run-repo-query" type="button">Query org and repo</button>
+
+  <script type="module">
+    import createOrgPrRelationshipChart from "./orgPrRelationshipChart.js";
+    import createRepoPrRelationshipChart from "./repoPrRelationshipChart.js";
+
+    document.getElementById("run-org-query").addEventListener('click', () => {
+      createOrgPrRelationshipChart(document.getElementById("organisation").value);
+    });
+    document.getElementById("run-repo-query").addEventListener('click', () => {
+      createRepoPrRelationshipChart(
+        document.getElementById("organisation").value,
+        document.getElementById("repo").value
+    )
+    });
+  </script>
+</article>
+</body>
+</html>
