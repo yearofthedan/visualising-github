@@ -39,7 +39,7 @@
         new FormData(event.target).entries()
       );
 
-      document.getElementById("submit-form").setAttribute('data-action-state', 'loading');
+      document.getElementById("submit-form").setAttribute('state', 'loading');
 
       if (!repo) {
         await createOrgPrRelationshipChart(organisation);
@@ -49,7 +49,7 @@
           repo
         );
       }
-      document.getElementById("submit-form").setAttribute('data-action-state', null);
+      document.getElementById("submit-form").setAttribute('state', 'idle');
     });
   </script>
 </article>
