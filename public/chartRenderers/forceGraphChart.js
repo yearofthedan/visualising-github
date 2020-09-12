@@ -40,9 +40,9 @@ function draw({links, nodes}) {
   .force("x", d3.forceX())
   .force("y", d3.forceY());
 
-  d3.select("body").select("svg").remove();
+  d3.select("#visualisation").select("svg").remove();
 
-  const svg = d3.select("body").append("svg")
+  const svg = d3.select("#visualisation").append("svg")
   .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
   const link = svg.append("g")
