@@ -13,19 +13,27 @@
   <link rel='stylesheet' href='https://unpkg.com/yot-web-components@1.6.1/dist/foundational/sizes.css' />
   <link rel='stylesheet' href='https://unpkg.com/yot-web-components@1.6.1/dist/foundational/overrides.css' />
 </head>
-<body style="display: flex;">
-  <yot-view style="flex: 1;">
-    <yot-view style="flex: 1;">
-      <nav><a href="/">Home</a></nav>
-    </yot-view>
-    <yot-view style="flex: 1; flex-direction: row;">
-      <form id="relationship-form" style="display: inline-flex;">
+<body style="display: flex; height: 100vh;">
+  <yot-view style="height: 100%; flex: 1; padding: var(--inset-density-s); row-gap: var(--stack-density-m);">
+    <h1>Visualising team relationships</h1>
+    <p style="max-width: 60ch; line-height: 1.5rem;">
+      This visualisation displays the relationship between people in a GitHub organisation based upon how often they approve each other's pull requests.
+    </p>
+    <yot-view style="flex-direction: row;">
+      <form
+          id="relationship-form"
+          style="display: inline-flex; column-gap: var(--inline-density-m); align-items: center;"
+      >
         <yot-textbox label="Organisation" field-id="organisation" type="text" value="facebook"/></yot-textbox>
         <yot-textbox label="Repository" field-id="repo" type="text" value="react"/></yot-textbox>
-        <yot-button id="submit-form" type="submit">Show approvals</yot-button>
+        <yot-button id="submit-form" type="submit">Show PR approvals</yot-button>
       </form>
     </yot-view>
-    <yot-scrollview id="visualisation"></yot-scrollview>
+    <yot-scrollview
+        style="flex: 1; border: 1px solid var(--palette-background-dark);">
+      <figure id="visualisation">
+      </figure>
+    </yot-scrollview>
   </yot-view>
 <article>
 
